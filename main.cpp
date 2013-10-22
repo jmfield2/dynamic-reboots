@@ -1,13 +1,21 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #include <iostream>
 #include <fstream>
+#include <string>
+#include <cstring>
+#include <cmath>
+#include <algorithm>
 #include <vector>
+
 using namespace std;
 
 
 //GLOBAL VARIABLES
-string inputFile = "/Users/Steve/Desktop/input.txt";
-string outputFile = "/Users/Steve/Desktop/cook.txt";
+const string inputFile = "input.txt";
+const string outputFile = "cook.txt";
 long positionR; // IGNORE - file position holder.
 
 // A day is defined as x(i) and s(i) from the input.  x(i) = data available on day i.  s(i) = processing ability on day i.
@@ -19,9 +27,9 @@ struct day {
 //FUNCTION PROTOTYPES
 void PrepOutputFile();   //create and clear output from previous execution
 int GetNumSets();   //read in total number of serpate data-sets to process
-int GetInput(vector<day>& daysList);  //read in n 'days' from file into vector of type 'days'.
-void CalculateTables(vector<day> &daysList, vector<vector<int>> &Costs, vector<vector<bool>> &Choice, int numDays, int &numReboots);
-void WriteOutput(vector<vector<int>> &Costs, vector<vector<bool>> &Choice, int numReboots, int numDays);
+int GetInput(vector<day> & daysList);  //read in n 'days' from file into vector of type 'days'.
+void CalculateTables(vector<day> &daysList, vector< vector<int> > &Costs, vector< vector<bool> > &Choice, int numDays, int &numReboots);
+void WriteOutput(vector< vector<int> > &Costs, vector< vector<bool> > &Choice, int numReboots, int numDays);
 
 
 int main()
@@ -35,8 +43,8 @@ int main()
         int numDays = GetInput(daysList);   //read in input from file to daysList.  Return # elements (days) in the current dataset.
         int numReboots = 0;
         
-        vector<vector<int>> Costs(numDays, vector<int>(numDays, 0));        //dynamic programming aspect which holds previously calculated values.
-        vector<vector<bool>> Choice(numDays, vector<bool>(numDays, false)); //dynamic programming aspect which holds each (continue/reboot) choice.
+        vector< vector<int> > Costs(numDays, vector<int>(numDays, 0));        //dynamic programming aspect which holds previously calculated values.
+        vector< vector<bool> > Choice(numDays, vector<bool>(numDays, false)); //dynamic programming aspect which holds each (continue/reboot) choice.
         
         CalculateTables(daysList, Costs, Choice, numDays, numReboots);
         WriteOutput(Costs, Choice, numReboots, numDays);
@@ -48,7 +56,7 @@ int main()
 void PrepOutputFile()
 {
     ofstream outFile;   //clear output file
-    outFile.open(outputFile);
+    outFile.open(outputFile.data());
     outFile.close();
 }
 
@@ -56,7 +64,7 @@ int GetNumSets()
 {
     int numSets = 0;
     ifstream inFile;    //get num sets
-    inFile.open (inputFile);
+    inFile.open(inputFile.data());
     if(inFile.is_open())
     {
         inFile >> numSets;
@@ -70,7 +78,7 @@ int GetInput(vector<day>& daysList)
 {
     int numDays = 0;
     fstream inFile;
-    inFile.open(inputFile);
+    inFile.open(inputFile.data());
     
     if(inFile.is_open())
     {
@@ -94,7 +102,7 @@ int GetInput(vector<day>& daysList)
     return numDays;
 }
 
-void CalculateTables(vector<day> &daysList, vector<vector<int>> &Costs, vector<vector<bool>> &Choice, int numDays, int &numReboots)
+void CalculateTables(vector<day> &daysList, vector< vector<int> > &Costs, vector< vector<bool> > &Choice, int numDays, int &numReboots)
 {
     //Fill in table for last column.  We logically will never choose to reboot on the last day.
     for(int i = 0; i < numDays; i++)
@@ -132,10 +140,10 @@ void CalculateTables(vector<day> &daysList, vector<vector<int>> &Costs, vector<v
     }
 }
 
-void WriteOutput(vector<vector<int>> &Costs, vector<vector<bool>> &Choice, int numReboots, int numDays)
+void WriteOutput(vector< vector<int> > &Costs, vector< vector<bool> > &Choice, int numReboots, int numDays)
 {
     ofstream outFile;
-    outFile.open(outputFile, ios::app);
+    outFile.open(outputFile.data(), ios::app);
     if(outFile.is_open())
     {
         outFile << Costs[0][0] << endl << numReboots << endl;
